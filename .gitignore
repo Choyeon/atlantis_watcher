@@ -1,19 +1,41 @@
+# ---------- 本地开发环境（不入库） ----------
 /.venv/
-/AtlantisWatcher.spec
-/build/
-/.gitignore
-/dist/
-/fastapi_app.spec
-/myapp.spec
-/main.spec
-/uv.lock
-/.idea/.gitignore
-/.idea/atlantis_watcher.iml
-/.idea/misc.xml
-/.idea/modules.xml
-/.idea/inspectionProfiles/profiles_settings.xml
-/.idea/dictionaries/project.xml
-/.idea/vcs.xml
+/.idea/
 /.vscode/
+/.workbuddy/
+
+# ---------- Python 缓存 ----------
+__pycache__/
+*.py[cod]
+
+# ---------- 构建产物与旧配置 ----------
+/build/
+/dist/
+/.dist/
+/fastapi_app.spec
+/main.spec
+/myapp.spec
+/uv.lock
 /log.txt
 /webgui/unpackage/
+
+# ---------- 前端工程 ----------
+/frontend/node_modules/
+/frontend/dist/
+/frontend/shots/
+/frontend/.vite/
+/frontend/*.local
+
+# Vite 产物由 npm run build 生成，不入库
+/static/dist/
+
+# ---------- 密钥与本机配置（绝不入库） ----------
+.env
+.env.*
+!.env.example
+local.properties
+keystore.properties
+*.keystore
+*.jks
+*.pfx
+*.p12

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#0b1220" />
+    <meta name="description" content="Atlantis Watcher - Windows 远程控制与系统监控" />
+    <!-- 品牌图标：SVG 优先，ICO 兜底，iOS/桌面快捷方式用 180px PNG -->
+    <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+    <link rel="icon" type="image/x-icon" href="./favicon.ico" />
+    <link rel="apple-touch-icon" href="./apple-touch-icon.png" />
+    <title>Atlantis Watcher</title>
+    <style>
+      /* 首屏骨架：在 JS 加载完成前避免白屏闪烁 */
+      html {
+        background: #0b1220;
+      }
+      html[data-theme='light'] {
+        background: #f4f6f8;
+      }
+      #app-boot {
+        position: fixed;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 18px;
+        font-family: 'JetBrains Mono', 'Cascadia Mono', Consolas, monospace;
+        color: #6ee7d7;
+        letter-spacing: 0.14em;
+        font-size: 12px;
+        z-index: 9999;
+      }
+      /* 启动画面直接用品牌图标，外圈是声呐扫描弧；与 exe / APK 图标同源 */
+      #app-boot .boot-mark {
+        position: relative;
+        width: 58px;
+        height: 58px;
+        display: grid;
+        place-items: center;
+      }
+      #app-boot .boot-mark img {
+        width: 44px;
+        height: 44px;
+        display: block;
+      }
+      #app-boot .boot-scan {
+        position: absolute;
+        inset: 0;
+        border: 1px solid rgba(110, 231, 215, 0.18);
+        border-top-color: #6ee7d7;
+        border-radius: 50%;
+        animation: boot-spin 1.4s linear infinite;
+      }
+      @keyframes boot-spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        #app-boot .boot-scan {
+          animation-duration: 3s;
+        }
+      }
+      /* 启动失败时的可读提示（JS 未能挂载时启用） */
+      #app-boot.is-error .boot-scan {
+        animation: none;
+        border-color: rgba(255, 107, 107, 0.5);
+        border-top-color: #ff6b6b;
+      }
+      #app-boot .hint {
+        display: none;
+        max-width: 78vw;
+        text-align: center;
+        font-size: 11px;
+        line-height: 1.7;
+        letter-spacing: 0.06em;
+        color: #ff9b9b;
+      }
+      #app-boot.is-error .hint {
+        display: block;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <div id="app-boot">
+        <div class="boot-mark">
+          <img src="./favicon.svg" alt="" width="44" height="44" />
+          <span class="boot-scan" aria-hidden="true"></span>
+        </div>
+        <div>ATLANTIS&nbsp;WATCHER</div>
+        <div class="hint">
+          启动失败：前端资源未能加载。<br />
+          请检查网络与主机地址设置后重试。
+        </div>
+      </div>
+    </div>
+    <script type="module" src="/src/main.js"></script>
+    <script>
+      /*
+        启动兜底：若 Vue 未能在 8 秒内接管 #app，
+        说明资源加载失败或脚本抛错 —— 给出可读提示，
+        避免用户面对无限旋转的圈不知发生了什么。
+      */
+      setTimeout(function () {
+        var boot = document.getElementById('app-boot');
+        if (boot && boot.parentNode && boot.parentNode.children.length === 1) {
+          boot.classList.add('is-error');
+        }
+      }, 8000);
+    </script>
+  </body>
+</html>

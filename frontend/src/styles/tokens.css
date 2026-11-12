@@ -1,0 +1,281 @@
+/* ==========================================================================
+   Atlantis Watcher — 设计令牌
+   风格：深海仪表盘 (Deep-Sea Instrument Panel)
+   理念：深色海面为底，仪表绿松石为数据主色，琥珀为警示。
+   避免 AI 味的蓝紫渐变与圆角卡片堆砌，转而使用：
+   - 刻度线 / 分栏结构，而非卡片套卡片
+   - 等宽字体承载数值，保证数字跳动时不抖动
+   - 单一强调色 + 语义色，克制使用
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. 暗色主题（默认）— 深海
+   -------------------------------------------------------------------------- */
+:root,
+[data-theme='dark'] {
+  color-scheme: dark;
+
+  /* 玻璃材质主题桥接：glassy-liquid 依此切换 light/dark 光学参数 */
+  --glass-appearance: dark;
+  --glass-accent: #35d6bd;
+
+  /* 层级底色：从最深的海沟到浮起的面板 */
+  --aw-abyss: #060b14;
+  --aw-deep: #0b1220;
+  --aw-hull: #101a2c;
+  --aw-panel: #142034;
+  --aw-panel-hi: #1a2942;
+  --aw-raised: #22324f;
+
+  /* 描边：冷调蓝灰，用亮度而非透明度分层 */
+  --aw-line: #1e2c42;
+  --aw-line-hi: #2b3d58;
+  --aw-line-soft: #182338;
+
+  /* 文本 */
+  --aw-text: #e8eef7;
+  --aw-text-dim: #9db0c8;
+  --aw-text-mute: #647891;
+  --aw-text-faint: #41536b;
+
+  /* 主色：海沫青松石 —— 数据与交互 */
+  --aw-accent: #35d6bd;
+  --aw-accent-hi: #5cf0d8;
+  --aw-accent-dim: #1e9c8a;
+  --aw-accent-ghost: rgba(53, 214, 189, 0.12);
+  --aw-accent-line: rgba(53, 214, 189, 0.32);
+
+  /* 语义色 */
+  --aw-ok: #3fcf8e;
+  --aw-ok-ghost: rgba(63, 207, 142, 0.13);
+  --aw-warn: #f5b642;
+  --aw-warn-ghost: rgba(245, 182, 66, 0.13);
+  --aw-danger: #ff6b6b;
+  --aw-danger-ghost: rgba(255, 107, 107, 0.13);
+  --aw-info: #5aa9ff;
+  --aw-info-ghost: rgba(90, 169, 255, 0.13);
+
+  /* 进度条语义梯度 */
+  --aw-meter-ok: var(--aw-ok);
+  --aw-meter-warn: var(--aw-warn);
+  --aw-meter-danger: var(--aw-danger);
+
+  /* 玻璃 / 遮罩 */
+  --aw-scrim: rgba(4, 8, 15, 0.74);
+  --aw-panel-glass: rgba(20, 32, 52, 0.86);
+
+  /* 阴影：深海无强光，阴影靠深度而非扩散 */
+  --aw-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --aw-shadow-md: 0 4px 14px rgba(0, 0, 0, 0.45);
+  --aw-shadow-lg: 0 18px 48px rgba(0, 0, 0, 0.6);
+
+  /* 焦点环 */
+  --aw-focus: 0 0 0 2px var(--aw-deep), 0 0 0 4px var(--aw-accent);
+
+  /* 字体 */
+  --aw-font-ui: 'Inter', 'HarmonyOS Sans SC', 'PingFang SC', 'Microsoft YaHei', system-ui,
+    -apple-system, 'Segoe UI', sans-serif;
+  --aw-font-mono: 'JetBrains Mono', 'Cascadia Mono', 'SF Mono', Consolas, 'Liberation Mono',
+    monospace;
+
+  /* 字号刻度 */
+  --aw-text-2xs: 0.6875rem;
+  --aw-text-xs: 0.75rem;
+  --aw-text-sm: 0.8125rem;
+  --aw-text-base: 0.875rem;
+  --aw-text-md: 0.9375rem;
+  --aw-text-lg: 1.0625rem;
+  --aw-text-xl: 1.375rem;
+  --aw-text-2xl: 1.875rem;
+  --aw-text-3xl: 2.5rem;
+
+  /* 间距刻度（4px 基线） */
+  --aw-space-1: 0.25rem;
+  --aw-space-2: 0.5rem;
+  --aw-space-3: 0.75rem;
+  --aw-space-4: 1rem;
+  --aw-space-5: 1.25rem;
+  --aw-space-6: 1.5rem;
+  --aw-space-8: 2rem;
+  --aw-space-10: 2.5rem;
+  --aw-space-12: 3rem;
+
+  /* 圆角：克制，小圆角带来工业仪表感 */
+  --aw-radius-xs: 2px;
+  --aw-radius-sm: 3px;
+  --aw-radius: 5px;
+  --aw-radius-lg: 8px;
+  --aw-radius-xl: 12px;
+  --aw-radius-pill: 999px;
+
+  /* 动效曲线：出场快、收尾稳 */
+  --aw-ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --aw-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --aw-ease-in: cubic-bezier(0.55, 0, 1, 0.45);
+  --aw-dur-fast: 120ms;
+  --aw-dur: 200ms;
+  --aw-dur-slow: 320ms;
+
+  /* 布局尺寸 */
+  --aw-rail-w: 232px;
+  --aw-rail-w-collapsed: 68px;
+  --aw-topbar-h: 56px;
+  --aw-tabbar-h: 60px;
+}
+
+/* --------------------------------------------------------------------------
+   2. 亮色主题 — 浅滩
+   -------------------------------------------------------------------------- */
+[data-theme='light'] {
+  color-scheme: light;
+
+  /* 玻璃材质主题桥接 */
+  --glass-appearance: light;
+  --glass-accent: #0f9e8a;
+
+  --aw-abyss: #e8edf2;
+  --aw-deep: #f4f6f8;
+  --aw-hull: #ffffff;
+  --aw-panel: #ffffff;
+  --aw-panel-hi: #f7f9fb;
+  --aw-raised: #eef2f6;
+
+  --aw-line: #dbe3ec;
+  --aw-line-hi: #c3cfdc;
+  --aw-line-soft: #e8edf2;
+
+  --aw-text: #16202f;
+  --aw-text-dim: #4a5a6e;
+  --aw-text-mute: #6b7d92;
+  --aw-text-faint: #9aabbd;
+
+  --aw-accent: #0d9488;
+  --aw-accent-hi: #0f766e;
+  --aw-accent-dim: #14b8a6;
+  --aw-accent-ghost: rgba(13, 148, 136, 0.1);
+  --aw-accent-line: rgba(13, 148, 136, 0.28);
+
+  --aw-ok: #12905a;
+  --aw-ok-ghost: rgba(18, 144, 90, 0.11);
+  --aw-warn: #b57608;
+  --aw-warn-ghost: rgba(181, 118, 8, 0.12);
+  --aw-danger: #d13b3b;
+  --aw-danger-ghost: rgba(209, 59, 59, 0.11);
+  --aw-info: #1f6fd0;
+  --aw-info-ghost: rgba(31, 111, 208, 0.11);
+
+  --aw-scrim: rgba(24, 34, 48, 0.44);
+  --aw-panel-glass: rgba(255, 255, 255, 0.92);
+
+  --aw-shadow-sm: 0 1px 2px rgba(22, 32, 47, 0.07);
+  --aw-shadow-md: 0 4px 14px rgba(22, 32, 47, 0.09);
+  --aw-shadow-lg: 0 18px 48px rgba(22, 32, 47, 0.16);
+
+  --aw-focus: 0 0 0 2px var(--aw-deep), 0 0 0 4px var(--aw-accent);
+}
+
+/* --------------------------------------------------------------------------
+   3. 语义工具类
+   -------------------------------------------------------------------------- */
+.aw-mono {
+  font-family: var(--aw-font-mono);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum' 1;
+}
+
+.aw-text-dim {
+  color: var(--aw-text-dim);
+}
+.aw-text-mute {
+  color: var(--aw-text-mute);
+}
+.aw-text-faint {
+  color: var(--aw-text-faint);
+}
+.aw-text-accent {
+  color: var(--aw-accent);
+}
+.aw-text-ok {
+  color: var(--aw-ok);
+}
+.aw-text-warn {
+  color: var(--aw-warn);
+}
+.aw-text-danger {
+  color: var(--aw-danger);
+}
+
+/* 仪表读数：大号等宽数字 */
+.aw-readout {
+  font-family: var(--aw-font-mono);
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+
+/* 标签：小型大写字母，仪表盘风格 */
+.aw-label {
+  font-family: var(--aw-font-mono);
+  font-size: var(--aw-text-2xs);
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--aw-text-mute);
+}
+
+/* 分隔刻度线 */
+.aw-rule {
+  height: 1px;
+  background: var(--aw-line);
+  border: 0;
+  margin: 0;
+}
+
+/* 滚动条 */
+.aw-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: var(--aw-line-hi) transparent;
+}
+.aw-scroll::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+.aw-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+.aw-scroll::-webkit-scrollbar-thumb {
+  background: var(--aw-line-hi);
+  border-radius: var(--aw-radius-pill);
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+.aw-scroll::-webkit-scrollbar-thumb:hover {
+  background: var(--aw-accent-dim);
+  background-clip: content-box;
+}
+
+/* 仅屏幕阅读器可见 */
+.aw-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* 减少动效偏好 */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

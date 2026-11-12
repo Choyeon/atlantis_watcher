@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 品牌色：由 tools/brand_assets.py 生成，勿手改 -->
+    <color name="aw_background">#0B1220</color>
+    <color name="aw_accent">#35D6BD</color>
+    <color name="aw_surface">#142034</color>
+    <color name="aw_text">#E8EEF7</color>
+
+    <!-- AppCompat 主题必需色项 -->
+    <color name="colorPrimary">#35D6BD</color>
+    <color name="colorPrimaryDark">#0B1220</color>
+    <color name="colorAccent">#35D6BD</color>
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+</resources>

@@ -1,0 +1,221 @@
+/* ==========================================================================
+   Atlantis Watcher — iOS 26 Liquid Glass 样式层
+
+   材质（折射 / 色散 / 镜面高光 / 光学参数）由第三方库 glassy-liquid 提供，
+   通过 `useGlass()` 原地升级 DOM 元素，无需改动页面结构。
+   该库按 Apple iOS 26 实测校准，且在 Chromium 下走 SVG feDisplacementMap
+   真折射路径；Safari/Firefox 自动降级为 WebGL scene 或 CSS 磨砂。
+
+   本文件只保留库无法覆盖的部分：
+     1. 液态形变 —— 选中项的"液态气泡"（库无对应能力）
+     2. iOS 26 控件样式 —— 分段控件、Sheet 等
+     3. 降级与无障碍偏好适配
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. 液态形变：选中项的"液态气泡"
+   iOS 26 中切换 Tab 时，选中态并非静态高亮，而是像液体一样
+   从一个图标"流动"到另一个图标。此处以可形变的椭圆 + 弹性缓动模拟。
+   -------------------------------------------------------------------------- */
+.lg-liquid-indicator {
+  position: absolute;
+  /* 撑满药丸内容区高度（父容器 padding 5px） */
+  top: 5px;
+  bottom: 5px;
+  left: 0;
+  z-index: 2;
+  border-radius: var(--aw-radius-pill);
+  background: var(--aw-accent-ghost);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.3),
+    0 4px 16px rgba(53, 214, 189, 0.28);
+  pointer-events: none;
+  transition:
+    transform 520ms var(--aw-ease-liquid, cubic-bezier(0.34, 1.56, 0.64, 1)),
+    width 520ms var(--aw-ease-liquid, cubic-bezier(0.34, 1.56, 0.64, 1)),
+    opacity 240ms var(--aw-ease);
+}
+
+/* 形变进行中的"拉伸"效果：宽度先略微超出再回弹 */
+.lg-liquid-indicator.is-morphing {
+  animation: lg-liquid-stretch 520ms var(--aw-ease-liquid, cubic-bezier(0.34, 1.56, 0.64, 1));
+}
+
+@keyframes lg-liquid-stretch {
+  0% {
+    border-radius: var(--aw-radius-pill);
+  }
+  45% {
+    border-radius: 46% 54% 58% 42% / 52% 44% 56% 48%;
+  }
+  75% {
+    border-radius: 54% 46% 44% 56% / 46% 56% 44% 54%;
+  }
+  100% {
+    border-radius: var(--aw-radius-pill);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   2. iOS 26 控件样式
+   -------------------------------------------------------------------------- */
+
+/* 分段控件（iOS 26 玻璃质感） */
+.ios-segmented {
+  display: flex;
+  position: relative;
+  padding: 2px;
+  border-radius: var(--aw-radius-pill);
+  background: var(--aw-raised);
+  border: 1px solid var(--aw-line);
+  isolation: isolate;
+}
+
+.ios-segmented__thumb {
+  position: absolute;
+  top: 2px;
+  bottom: 2px;
+  left: 0;
+  z-index: 0;
+  border-radius: var(--aw-radius-pill);
+  background: var(--aw-panel-hi);
+  box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  transition:
+    transform 380ms var(--aw-ease-liquid, cubic-bezier(0.34, 1.56, 0.64, 1)),
+    width 380ms var(--aw-ease-liquid, cubic-bezier(0.34, 1.56, 0.64, 1));
+}
+
+[data-theme='light'] .ios-segmented__thumb {
+  background: #ffffff;
+  box-shadow:
+    0 2px 8px rgba(20, 30, 45, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+.ios-segmented__item {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  padding: var(--aw-space-2) var(--aw-space-3);
+  font-size: var(--aw-text-sm);
+  font-weight: 500;
+  color: var(--aw-text-mute);
+  text-align: center;
+  white-space: nowrap;
+  transition: color 240ms var(--aw-ease);
+}
+
+.ios-segmented__item.is-active {
+  color: var(--aw-text);
+  font-weight: 600;
+}
+
+/* iOS 开关 */
+.ios-switch {
+  position: relative;
+  width: 51px;
+  height: 31px;
+  border-radius: var(--aw-radius-pill);
+  background: var(--aw-raised);
+  border: 1px solid var(--aw-line);
+  transition: background-color 280ms var(--aw-ease);
+  flex-shrink: 0;
+}
+
+.ios-switch::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow:
+    0 2px 6px rgba(0, 0, 0, 0.22),
+    0 0 0 0.5px rgba(0, 0, 0, 0.04);
+  transition: transform 280ms var(--aw-ease-liquid, cubic-bezier(0.34, 1.56, 0.64, 1));
+}
+
+.ios-switch.is-on {
+  background: var(--aw-ok);
+  border-color: transparent;
+}
+
+.ios-switch.is-on::after {
+  transform: translateX(20px);
+}
+
+/* iOS 分组列表（inset grouped） */
+.ios-group {
+  border-radius: var(--aw-radius-xl);
+  background: var(--aw-panel);
+  border: 1px solid var(--aw-line);
+  overflow: hidden;
+}
+
+.ios-group__row {
+  display: flex;
+  align-items: center;
+  gap: var(--aw-space-3);
+  padding: var(--aw-space-3) var(--aw-space-4);
+  border-bottom: 1px solid var(--aw-line-soft);
+}
+
+.ios-group__row:last-child {
+  border-bottom: none;
+}
+
+.ios-group__label {
+  flex: 1;
+  min-width: 0;
+  font-size: var(--aw-text-base);
+  color: var(--aw-text);
+}
+
+.ios-group__value {
+  font-family: var(--aw-font-mono);
+  font-size: var(--aw-text-sm);
+  color: var(--aw-text-mute);
+}
+
+/* iOS 大标题（Large Title） */
+.ios-large-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--aw-text);
+}
+
+/* --------------------------------------------------------------------------
+   3. 降级：不支持 backdrop-filter 时
+   玻璃材质由 glassy-liquid 注入，它自身已处理
+   prefers-reduced-transparency / forced-colors 场景。
+   此处仅保证药丸导航在无 backdrop-filter 环境下
+   仍有实体底色与边界，不至于"隐形"。
+   -------------------------------------------------------------------------- */
+@supports not ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
+  .tabbar__pill {
+    background: var(--aw-hull);
+    border: 1px solid var(--aw-line);
+  }
+
+  [data-theme='light'] .tabbar__pill {
+    background: var(--aw-panel);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   4. 降低动效偏好
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  .lg-liquid-indicator {
+    transition: none;
+  }
+
+  .lg-liquid-indicator.is-morphing {
+    animation: none;
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "appId": "com.atlantis.watcher",
+  "appName": "Atlantis Watcher",
+  "webDir": "../static/dist",
+  "android": {
+    "allowMixedContent": true,
+    "captureInput": true,
+    "webContentsDebuggingEnabled": false,
+    "backgroundColor": "#0b1220"
+  },
+  "server": {
+    "androidScheme": "https",
+    "cleartext": true
+  }
+}
