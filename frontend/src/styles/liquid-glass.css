@@ -1,66 +1,52 @@
 /* ==========================================================================
-   Atlantis Watcher — iOS 26 Liquid Glass 样式层
+   Atlantis Watcher — iOS 27 Liquid Glass 样式层
 
-   材质（折射 / 色散 / 镜面高光 / 光学参数）由第三方库 glassy-liquid 提供，
-   通过 `useGlass()` 原地升级 DOM 元素，无需改动页面结构。
-   该库按 Apple iOS 26 实测校准，且在 Chromium 下走 SVG feDisplacementMap
+   材质与拖动交互由第三方库 glassy-liquid 提供：
+     - 导航药丸 / 拖动放大镜：GlassTabBar（Shadow DOM 内注入 gl-fx 折射层）
+     - 通用玻璃表面：useGlass() 原地升级 DOM
+   该库按 Apple 实测光学参数校准，Chromium 下走 SVG feDisplacementMap
    真折射路径；Safari/Firefox 自动降级为 WebGL scene 或 CSS 磨砂。
 
    本文件只保留库无法覆盖的部分：
-     1. 液态形变 —— 选中项的"液态气泡"（库无对应能力）
-     2. iOS 26 控件样式 —— 分段控件、Sheet 等
+     1. iOS 27 观感收尾 —— 更清晰的边界、主题桥接
+     2. iOS 控件样式 —— 分段控件、Sheet 等
      3. 降级与无障碍偏好适配
    ========================================================================== */
 
 /* --------------------------------------------------------------------------
-   1. 液态形变：选中项的"液态气泡"
-   iOS 26 中切换 Tab 时，选中态并非静态高亮，而是像液体一样
-   从一个图标"流动"到另一个图标。此处以可形变的椭圆 + 弹性缓动模拟。
+   1. 底部导航的液态放大镜（iOS 27）
+   --------------------------------------------------------------------------
+   拖动交互由 GlassTabBar 内部驱动：
+     按下抬升 → 跟随手指 → 两端橡皮筋阻尼 → 松手弹性吸附。
+   静态药丸与放大镜的折射、色散、镜面高光均由 GlassSurface 绘制。
+
+   此处只负责 iOS 27 的观感收尾——更明确的边界而非厚重投影。
+   主题色、深浅色选中态底色与尺寸在 AppTabbar.vue 中注入。
    -------------------------------------------------------------------------- */
-.lg-liquid-indicator {
-  position: absolute;
-  /* 撑满药丸内容区高度（父容器 padding 5px） */
-  top: 5px;
-  bottom: 5px;
-  left: 0;
-  z-index: 2;
-  border-radius: var(--aw-radius-pill);
-  background: var(--aw-accent-ghost);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.3),
-    0 4px 16px rgba(53, 214, 189, 0.28);
-  pointer-events: none;
-  transition:
-    transform 520ms var(--aw-ease-liquid, cubic-bezier(0.34, 1.56, 0.64, 1)),
-    width 520ms var(--aw-ease-liquid, cubic-bezier(0.34, 1.56, 0.64, 1)),
-    opacity 240ms var(--aw-ease);
+glass-tab-bar::part(indicator) {
+  outline: 0.5px solid rgba(255, 255, 255, 0.2);
+  outline-offset: -0.5px;
 }
 
-/* 形变进行中的"拉伸"效果：宽度先略微超出再回弹 */
-.lg-liquid-indicator.is-morphing {
-  animation: lg-liquid-stretch 520ms var(--aw-ease-liquid, cubic-bezier(0.34, 1.56, 0.64, 1));
+[data-theme='light'] glass-tab-bar::part(indicator) {
+  outline-color: rgba(20, 30, 45, 0.12);
 }
 
-@keyframes lg-liquid-stretch {
-  0% {
-    border-radius: var(--aw-radius-pill);
-  }
-  45% {
-    border-radius: 46% 54% 58% 42% / 52% 44% 56% 48%;
-  }
-  75% {
-    border-radius: 54% 46% 44% 56% / 46% 56% 44% 54%;
-  }
-  100% {
-    border-radius: var(--aw-radius-pill);
-  }
+/* 拖动中的放大镜：边缘更清晰，避免与背景糊成一片 */
+glass-tab-bar::part(lens) {
+  outline: 0.5px solid rgba(255, 255, 255, 0.28);
+  outline-offset: -0.5px;
+}
+
+[data-theme='light'] glass-tab-bar::part(lens) {
+  outline-color: rgba(20, 30, 45, 0.16);
 }
 
 /* --------------------------------------------------------------------------
-   2. iOS 26 控件样式
+   2. iOS 控件样式
    -------------------------------------------------------------------------- */
 
-/* 分段控件（iOS 26 玻璃质感） */
+/* 分段控件（iOS 玻璃质感） */
 .ios-segmented {
   display: flex;
   position: relative;
@@ -200,22 +186,28 @@
   .tabbar__pill {
     background: var(--aw-hull);
     border: 1px solid var(--aw-line);
+    border-radius: var(--aw-radius-pill);
   }
 
   [data-theme='light'] .tabbar__pill {
     background: var(--aw-panel);
   }
+
+  /* 无折射时仍需看清选中项 */
+  glass-tab-bar::part(indicator) {
+    background: var(--aw-accent-ghost) !important;
+  }
 }
 
 /* --------------------------------------------------------------------------
    4. 降低动效偏好
+   --------------------------------------------------------------------------
+   库内部使用弹簧动画而非 CSS transition，此处关闭剩余的过渡效果；
+   真实减弱仍由 glassy-liquid 的 prefers-reduced-transparency 处理。
    -------------------------------------------------------------------------- */
 @media (prefers-reduced-motion: reduce) {
-  .lg-liquid-indicator {
-    transition: none;
-  }
-
-  .lg-liquid-indicator.is-morphing {
-    animation: none;
+  glass-tab-bar::part(indicator),
+  glass-tab-bar::part(lens) {
+    transition: none !important;
   }
 }
