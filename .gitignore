@@ -12,6 +12,7 @@ __pycache__/
 /build/
 /dist/
 /.dist/
+/release/
 /fastapi_app.spec
 /main.spec
 /myapp.spec
