@@ -14,7 +14,7 @@
 
 #define AppName "Atlantis Watcher"
 #define AppShortName "AtlantisWatcher"
-#define AppVersion "1.1.0"
+#define AppVersion "1.1.1"
 #define AppPublisher "Atlantis"
 #define AppExeName "AtlantisWatcher.exe"
 #define AppUrl "https://github.com/Choyeon/atlantis_watcher"

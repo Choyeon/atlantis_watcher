@@ -25,7 +25,7 @@ DIST_DIR = PROJECT_ROOT / 'dist'
 FRONTEND_DIST = PROJECT_ROOT / 'static' / 'dist'
 
 APP_NAME = 'AtlantisWatcher'
-APP_VERSION = '1.1.0'
+APP_VERSION = '1.1.1'
 APP_DESCRIPTION = 'Atlantis Watcher - Windows 远程控制与系统监控'
 
 # ---------------------------------------------------------------------------
