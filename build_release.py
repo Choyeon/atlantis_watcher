@@ -28,6 +28,11 @@ import sys
 import time
 from pathlib import Path
 
+# Keep colored Unicode status messages safe on Windows consoles using legacy code pages.
+for _stream in (sys.stdout, sys.stderr):
+    if hasattr(_stream, 'reconfigure'):
+        _stream.reconfigure(encoding='utf-8', errors='replace')
+
 PROJECT_ROOT = Path(__file__).resolve().parent
 BUILD_DIR = PROJECT_ROOT / 'build'
 DIST_DIR = PROJECT_ROOT / 'dist'

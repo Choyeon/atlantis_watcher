@@ -7,6 +7,7 @@ import time
 import json
 from typing import Dict, Any
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
+from starlette.websockets import WebSocketState
 from app.logging_utils import get_logger
 from app.decorators import async_log_exceptions
 from app.services.system_service import SystemService
@@ -105,10 +106,13 @@ async def monitor_websocket(websocket: WebSocket):
         logger.error(f"监控WebSocket连接错误: {str(e)}")
     finally:
         logger.info("系统监控WebSocket连接已关闭")
-        try:
-            await websocket.close()
-        except Exception as e:
-            logger.warning(f"关闭WebSocket连接时出错: {str(e)}")
+        if (websocket.application_state == WebSocketState.CONNECTED
+                and websocket.client_state == WebSocketState.CONNECTED):
+            try:
+                await websocket.close()
+            except (WebSocketDisconnect, RuntimeError) as e:
+                # A disconnect event can race with the close handshake.
+                logger.debug(f"WebSocket 已关闭: {e}")
 
 
 @router.websocket("/ws/screen")
@@ -217,8 +221,10 @@ async def screen_share_websocket(websocket: WebSocket):
         
         logger.info("屏幕共享WebSocket连接已关闭")
         
-        # 确保连接已关闭
-        try:
-            await websocket.close()
-        except Exception as e:
-            logger.warning(f"关闭屏幕共享WebSocket连接时出错: {str(e)}")
+        # Only initiate the close handshake if the client has not disconnected.
+        if (websocket.application_state == WebSocketState.CONNECTED
+                and websocket.client_state == WebSocketState.CONNECTED):
+            try:
+                await websocket.close()
+            except (WebSocketDisconnect, RuntimeError) as e:
+                logger.debug(f"屏幕共享 WebSocket 已关闭: {e}")

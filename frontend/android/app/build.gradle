@@ -1,8 +1,8 @@
 apply plugin: 'com.android.application'
 
 // 版本号：由 tools/build_android.py 在构建前同步
-def awVersionName = "1.1.0"
-def awVersionCode = 10100
+def awVersionName = "1.1.2"
+def awVersionCode = 10102
 
 android {
     namespace "com.atlantis.watcher"

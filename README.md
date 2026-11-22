@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="assets/brand/atlantis-watcher.svg" width="88" alt="声呐眼 · 深渊信标">
+  <img src="assets/brand/atlantis-watcher.svg" width="88" alt="深渊网关 · Atlantis Watcher">
   <h1>Atlantis Watcher</h1>
   <p><strong>深海仪表盘风格的 Windows 远程控制与系统监控工具</strong></p>
   <p>v1.1.0 &nbsp;·&nbsp; Windows 10 / 11 &nbsp;·&nbsp; 局域网 Web + Android APK</p>
@@ -52,7 +52,7 @@
   </tr>
 </table>
 
-**品牌标识「声呐眼」**：C 形扫描环 + 中心镜头 + 琥珀信号点 + 水波刻度，16px 也保持可读。
+**品牌标识「深渊网关」**：几何 A 形网关、中心控制信号块与双节点连接线，表达实时遥控、系统智能与局域网连接，16px 仍保持可读。
 
 <p align="center"><img src="assets/brand/preview.png" alt="品牌图标总览" width="720"></p>
 

@@ -153,19 +153,18 @@ python tools/sign.py --pfx cert.pfx --password "密码"
 原 `icon.ico` 曾是 **PNG 文件改了扩展名**（64×64 单尺寸），资源管理器与托盘显示退化；
 早期 `make_icon.py` / `make_android_icon.py` 又各画一遍，桌面与 APK 图形容易漂移。
 
-现在全部资产由 `tools/brand_assets.py` 从同一组 0–100 归一化几何生成：
+现在全部资产由 `tools/brand_assets.py` 从 `assets/brand/atlantis-watcher-source.png` 这张主图生成：
 
 | 产物 | 说明 |
 |---|---|
-| `icon.ico` | 16/24/32/48/64/128/256 七帧，**每帧独立绘制并按尺寸 LOD 简化**（≤24px 只留环/镜头/信号点） |
+| `icon.ico` | 16/24/32/48/64/128/256 七帧，统一使用主图并按尺寸高质量缩放 |
 | `frontend/public/favicon.*` | SVG + ICO + 16/32/180/192/512 PNG；由 `app/routers/meta.py` 从站点根提供 |
-| `frontend/src/assets/brandPaths.js` | `BrandMark.vue` 的路径常量，与 SVG / Android vector 同源 |
+| `frontend/src/assets/brandMark.svg` | 前端 BrandMark 使用的同源品牌资源 |
 | `mipmap-*/ic_launcher*.png` | 五档密度方形/圆形/自适应前景/单色主题图标（108dp 安全区 66%） |
 | `drawable*/splash.png` | 深底品牌启动图，替换 Capacitor 白色默认图 |
-| `assets/brand/*.svg` / `preview.png` | 矢量真源与人工目检总览图 |
+| `assets/brand/atlantis-watcher-source.png` / `preview.png` | 原始主图与人工目检总览图 |
 
-配色沿用前端 token：深底 `#0B1220`、海沫青松石 `#35D6BD`、琥珀信号 `#F5B642`；
-无渐变、无阴影浮起，以边框分区保持工业仪表感。
+配色来自主图：深午夜蓝底、电子青蓝网关、琥珀控制信号；Android 自适应图标会额外生成透明前景与单色主题资源。
 
 ```bash
 python tools/brand_assets.py        # 全量重生成

@@ -25,13 +25,16 @@ for (const vp of VIEWPORTS) {
     const marks = await page.locator('.brand-mark').count()
     if (marks < 1) errors.push(`[${vp.name}] 未渲染品牌标记`)
 
-    const railPaths = await page.locator('.rail__mark .brand-mark path').count()
-    if (railPaths !== 8) errors.push(`[${vp.name}] 侧栏 mark 路径数异常: ${railPaths} (期望 8)`)
+    const railImage = page.locator('.rail__mark .brand-mark')
+    if (await railImage.count() < 1) errors.push(`[${vp.name}] 侧栏品牌图标未渲染`)
+    await railImage.first().evaluate((node) => {
+      if (node.complete && node.naturalWidth > 0) return
+      return new Promise((resolve) => node.addEventListener('load', resolve, { once: true }))
+    })
+    const naturalWidth = await railImage.first().evaluate((node) => node.naturalWidth || 0)
+    if (naturalWidth < 1) errors.push(`[${vp.name}] 侧栏品牌图标资源未加载`)
 
-    const hasAccent = await page.locator('.rail__mark .brand-mark path[stroke="#35D6BD"]').count()
-    if (hasAccent < 1) errors.push(`[${vp.name}] 声呐环未使用品牌青松石`)
-
-    console.log(`${vp.name}: marks=${marks} railPaths=${railPaths} accentStroke=${hasAccent}`)
+    console.log(`${vp.name}: marks=${marks} imageWidth=${naturalWidth}`)
   } catch (err) {
     errors.push(`[${vp.name}] ${err.message.split('\n')[0]}`)
   } finally {
